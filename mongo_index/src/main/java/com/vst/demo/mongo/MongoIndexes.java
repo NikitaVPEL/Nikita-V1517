@@ -1,33 +1,27 @@
 package com.vst.demo.mongo;
 
-
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.index.Index;
 
+import com.mongodb.ExplainVerbosity;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoCredential;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.Indexes;
-
+import com.mongodb.connection.Connection;
 
 public class MongoIndexes {
-
-	@Autowired
-	MongoTemplate mongoTemplate;
 	
-	
+	public String mongoIndexes() {
+		MongoClient mongoClient = new MongoClient("localhost",27017);
+		MongoDatabase database = mongoClient.getDatabase("test");
+		System.out.println(database);
+		MongoCollection<Document> collection = database.getCollection("DB");
+		collection.find().explain(ExplainVerbosity.ALL_PLANS_EXECUTIONS);
+        System.out.println(collection);
+        return "connection established:";
 
-	public void createIndex() {
-	    mongoTemplate.indexOps("users").ensureIndex(new Index().on("name", Direction.ASC));
-	    		
 	}
-
-	 
-	
-	
 	}
 
 

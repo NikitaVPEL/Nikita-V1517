@@ -9,11 +9,13 @@ import com.vts.redis.model.Student;
 
 @Repository
 public class StudentRepo {
-
-	private static final String HASH_KEY = "Student";
 	
+
 	@Autowired
 	RedisTemplate redisTemplate;
+
+	public static final String HASH_KEY = "Student";
+	
 	
 	public Student save(Student student) {
 		 redisTemplate.opsForHash().put(HASH_KEY,student.getId(),student);
@@ -24,8 +26,8 @@ public class StudentRepo {
 		return  redisTemplate.opsForHash().values(HASH_KEY);
 	}
 	
-	public Object findStudentById(int id) {
-	return 	redisTemplate.opsForHash().get(HASH_KEY, id);
+	public Student findStudentById(int id) {
+	return 	(Student) redisTemplate.opsForHash().get(HASH_KEY, id);
 	
 //		String student=redisTemplate.opsForHash().get(HASH_KEY, id).toString();	
 //		return student;

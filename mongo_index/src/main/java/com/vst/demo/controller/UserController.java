@@ -6,6 +6,7 @@ import java.util.Optional;
 import javax.swing.SortOrder;
 
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.hibernate.result.Output;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -15,7 +16,6 @@ import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.aggregation.MatchOperation;
 import org.springframework.data.mongodb.core.aggregation.SortOperation;
-import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,7 +25,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.mongodb.client.MongoClient;
+import com.mongodb.ExplainVerbosity;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientOptions;
+
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
+import com.mongodb.client.MongoDatabase;
 import com.vst.demo.model.User;
 import com.vst.demo.repository.UserRepo;
 
@@ -40,9 +46,27 @@ public class UserController {
 	
 	@Autowired
 	MongoClient mongoClient;
+	
 	@Autowired
 	MongoTemplate mongoTemplate;
 
+	
+		MongoClient mongoClient2 = new MongoClient("localhost",27017);
+	MongoDatabase database = mongoClient2.getDatabase("test");
+	MongoCollection<Document> collection = database.getCollection("DB");
+    
+
+
+	@GetMapping("getid/{id}")
+	public Optional<User> getid(@PathVariable Bson id) {
+
+	System.out.println(collection.find(id).explain(ExplainVerbosity.ALL_PLANS_EXECUTIONS));
+		
+		
+		//System.out.println(repo.findById(id));
+		return null;
+
+	}
 	
 	@PostMapping("db")
 	public boolean save(@RequestBody User user) {
@@ -79,14 +103,23 @@ public class UserController {
 		return repo.findByName(name);
 	}
 	
-//	@GetMapping("/user/{phone}")
-//	List<User> findAll(@PathVariable(value = "name") String phone){
-//		Query query=new Query();
-//		query.addCriteria(Criteria.where("phone").is(phone));
-//		
-//	return	mongoTemplate.find(query, User.class);
-//		
-//	}
+	@GetMapping("/user/{phone}")
+	List<User> findAll(@PathVariable(value = "name") String phone){
+		Query query=new Query();
+		query.addCriteria(Criteria.where("phone").is(phone));
+		
+	return	mongoTemplate.find(query, User.class);
+		
+	}
+	
+	@GetMapping("add/{add}")
+	List<User> findAdd(@PathVariable String add){
+		
+		
+	return	repo.findByAdd(add);
+		
+	}
+	
 	
 //	@GetMapping("add/{add}")
 //	List<User> findAdd(@PathVariable String add){
@@ -133,8 +166,7 @@ public class UserController {
 //			System.out.println(results.getUniqueMappedResult());
 //			return results.getUniqueMappedResult();
 //			}
-	
-	}
-
-	
+//	
+//		
+}
 
