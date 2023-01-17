@@ -28,7 +28,7 @@ public class OrderService {
 		payment.setOrderId(order.getId());
 		payment.setAmount(order.getPrice());
 		//rest call
-	Payment paymentResponce =	restTemplate.postForObject("http://localhost:9091/payment/savePayment", payment, Payment.class);
+	Payment paymentResponce =	restTemplate.postForObject("http://PAYMENT-MICROSERVICE/payment/savePayment", payment, Payment.class);
 	
 	//System.out.println(paymentResponce);
 		
