@@ -1,10 +1,8 @@
 package com.vst.service;
 
-import org.apache.logging.log4j.message.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
 import com.vst.common.Payment;
 import com.vst.common.TransactionRequest;
 import com.vst.common.TransactionResponce;
