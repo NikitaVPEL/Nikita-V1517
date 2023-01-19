@@ -1,9 +1,12 @@
 package com.vst.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import com.vst.common.Payment;
+import com.vst.common.PaymentService;
 import com.vst.common.TransactionRequest;
 import com.vst.common.TransactionResponce;
 import com.vst.model.Order;
@@ -38,4 +41,19 @@ public class OrderService {
 		 
 	}
 
+	public TransactionRequest getOrder(int id) {
+		
+		
+		Order order=orderRepository.findById(id);
+		
+		String url = "http://PAYMENT-MICROSERVICE/payment/{orderId}";
+		 Payment payment = new Payment();
+		
+		 payment= restTemplate.getForObject(url,Payment.class);
+
+		System.out.println(order);
+		//System.out.println(payment);
+		 return new TransactionRequest(order,payment);
+		
+	}
 }

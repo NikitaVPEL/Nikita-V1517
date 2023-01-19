@@ -1,9 +1,12 @@
 package com.vst.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.vst.common.Payment;
@@ -28,23 +31,15 @@ public class OrderController {
 	@PostMapping("/postOrder")
 	public TransactionResponce postOrder(@RequestBody TransactionRequest request) {
 	
-		
-		
-		
-		//Order order = request.getOrder();
-//	System.out.println(order);
-	//	order.setId(db_Service.getSequenceNumber(order.SEQUENCE_NAME));
-	//	System.out.println(order);
-		
-		//TransactionResponce res=
 				return orderService.saveOrder(request);
-		
-		//System.out.println(res);
-		
-		//return res;
-		
-		
+	
 	}
 	
+	@GetMapping("/{id}")
+	public TransactionRequest getOrder(@PathVariable int id) {
+		
+		return orderService.getOrder(id);
+		
+	}
 
 }

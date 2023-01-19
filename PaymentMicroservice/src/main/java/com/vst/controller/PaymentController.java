@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.vst.model.Payment;
@@ -28,8 +29,9 @@ public class PaymentController {
 		return paymentService.savePayment(payment);
 	}
 	
-	@GetMapping("/{orderId}")
-	public Payment findPaymentHistoryByOrderId(@PathVariable int orderId) {
+	@GetMapping
+	public Payment findPaymentHistoryByOrderId(@RequestParam("orderId") int orderId) {
+		
 		return paymentService.findPaymentHistoryByOrderId(orderId);
 	}
 
