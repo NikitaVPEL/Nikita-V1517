@@ -7,14 +7,17 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.vst.demo.exception.VehicalException;
 import com.vst.demo.model.Vehical;
+import com.vst.demo.service.KafkaPublisher;
 import com.vst.demo.service.SequenceGeneratorService;
 import com.vst.demo.service.VehicalServiceImpl;
 import com.vst.demo.util.ExcelReader;
@@ -22,6 +25,7 @@ import com.vst.demo.util.ExcelReader;
 import jakarta.validation.Valid;
 
 @RestController
+@RequestMapping("vehical")
 public class VehicalController {
 
 	private static final Logger logger = LogManager.getLogger(VehicalController.class);
@@ -32,20 +36,24 @@ public class VehicalController {
 	@Autowired
 	SequenceGeneratorService sequenceService;
 	
-	
+	@Autowired
+	KafkaPublisher kafkaPublisher;
+
+	// get method for read the excel file for excel reader
 	@GetMapping("info")
-	public  List<Vehical> getExcelData(){
-		ExcelReader exr= new ExcelReader();
+	public List<Vehical> getExcelData() {
+		ExcelReader exr = new ExcelReader();
 		return exr.vehicalTestReader();
-		
-	} 
-	
+
+	}
+
 //	@GetMapping("infos")
 //	public List<Vehical> getExcelList(){
 //	AnotherExcelReader excel = new AnotherExcelReader();
 //	return excel.vehicalTestExcel();
 //	}
 
+	// post/save the vehical details
 	@PostMapping("vehical")
 	public String saveVehicalDetail(@Valid @RequestBody Vehical vehical) {
 
@@ -64,6 +72,7 @@ public class VehicalController {
 		}
 	}
 
+	// soft delete, or deregister the vehical
 	@DeleteMapping("vehical")
 	public String deleteVehicalById(@RequestParam int id) {
 
@@ -80,6 +89,7 @@ public class VehicalController {
 		}
 	}
 
+	// update the vehical details
 	@PutMapping("vehical")
 	public String UpdateVehical(@RequestParam("id") int id, @Valid @RequestBody Vehical vehical) {
 
@@ -91,11 +101,10 @@ public class VehicalController {
 
 			logger.error("Something went wrong please check details");
 			throw new VehicalException(e.getMessage());
-
 		}
-
 	}
 
+	// find vehical by id
 	@GetMapping("vehical")
 	public Vehical getDetailsById(@RequestParam("id") int id) {
 
@@ -105,7 +114,6 @@ public class VehicalController {
 			if (obj != null) {
 				return obj;
 			} else {
-
 				throw new VehicalException("data doesn't exist");
 			}
 		} else {
@@ -114,6 +122,7 @@ public class VehicalController {
 		}
 	}
 
+	// get all vehical details
 	@GetMapping("vehicals") // read all details
 	public List<Vehical> getAllDetails() {
 
@@ -128,6 +137,7 @@ public class VehicalController {
 
 	}
 
+	// find vehical by registration no.
 	@GetMapping("vehicalRegistrationNo") // read details by registration no
 	public Vehical getvehicalByRegistrationNo(@RequestParam("number") String number) {
 
@@ -139,6 +149,7 @@ public class VehicalController {
 
 	}
 
+	// find vehical by veical class
 	@GetMapping("vehicalClass") // read details by vehical class
 	public Vehical getVehicalByVehicalClass(@RequestParam("vclass") String vclass) {
 
@@ -150,6 +161,7 @@ public class VehicalController {
 			throw new VehicalException("no data found");
 	}
 
+	// find vehical by vehical company
 	@GetMapping("vehicalCompany") // read details by vehical company
 	public Vehical getVehicalByVehicalCompany(@RequestParam("company") String company) {
 
@@ -161,6 +173,7 @@ public class VehicalController {
 			throw new VehicalException("no data found");
 	}
 
+	// find vehical by vehical model
 	@GetMapping("VehicalModel") // read details by model
 	public Vehical getVehicalByVehicalModel(@RequestParam("model") String model) {
 
@@ -172,6 +185,7 @@ public class VehicalController {
 			throw new VehicalException("no data found");
 	}
 
+	// find vehical by battry type
 	@GetMapping("VehicalBattryType") // read details by battry type
 	public Vehical getVehicalByVehicalBattryType(@RequestParam("type") String type) {
 
@@ -183,6 +197,7 @@ public class VehicalController {
 			throw new VehicalException("no data found");
 	}
 
+	// find vehical by battry capacity
 	@GetMapping("VehicalBattryCapacity") // read details by battry capacity
 	public Vehical getVehicalByVehicalBattryCapacity(@RequestParam("capacity") String capacity) {
 
@@ -194,6 +209,7 @@ public class VehicalController {
 			throw new VehicalException("no data found");
 	}
 
+	// find vehical by adaptor type
 	@GetMapping("VehicalAdaptorType") // read details by adaptor type
 	public Vehical getVehicalByVehicalAdaptorType(@RequestParam("atype") String atype) {
 
@@ -205,6 +221,7 @@ public class VehicalController {
 			throw new VehicalException("no data found");
 	}
 
+	// find vehical by owner uid
 	@GetMapping("VehicalOwnerUID") // read details by owner UID
 	public Vehical getVehicalByVehicalOwnerUID(@RequestParam("UID") String UID) {
 
@@ -215,36 +232,46 @@ public class VehicalController {
 		else
 			throw new VehicalException("no data found");
 	}
-	
+
+	// save multiple details at a time
 	@GetMapping("multiple")
 	public boolean saveMultiple() {
-		
-		
-		for(int i=1; i<10000; i++) {
+
+		for (int i = 1; i < 10000; i++) {
 			Vehical vehical = new Vehical();
-			
+
 			vehical.setVehicalRegistrationNo("MH23RF6543" + i);
-			vehical.setVehicalClass("SUV"+i);
-			vehical.setVehicalCompany("TATA"+i);
-			vehical.setVehicalModel("nexon"+i);
-			vehical.setVehicalColour("white"+i);
-			vehical.setVehicalBattryType("Lithium-ion"+i);
-			vehical.setVehicalBattryCapacity("30.2kWh"+i);
-			vehical.setVehicalBattryWarranty("5years"+i);
-			vehical.setVehicalAdaptorType("CSS2"+i);
-			vehical.setVehicalTimeToCharge("9 Hour"+i);
-			vehical.setVehicalPowerOutlet("front"+i);
-			vehical.setVehicalChargeRange("60km"+i);
-			vehical.setVehicalOwnerName("nikita"+i);
-			vehical.setVehicalOwnerUID("243578765432"+i);
-			vehical.setVehicalOwnerContactDetails("8765432345"+i);
-			vehical.setVehicalOwnerAddress("Nagpur"+i);
+			vehical.setVehicalClass("SUV" + i);
+			vehical.setVehicalCompany("TATA" + i);
+			vehical.setVehicalModel("nexon" + i);
+			vehical.setVehicalColour("white" + i);
+			vehical.setVehicalBattryType("Lithium-ion" + i);
+			vehical.setVehicalBattryCapacity("30.2kWh" + i);
+			vehical.setVehicalBattryWarranty("5years" + i);
+			vehical.setVehicalAdaptorType("CSS2" + i);
+			vehical.setVehicalTimeToCharge("9 Hour" + i);
+			vehical.setVehicalPowerOutlet("front" + i);
+			vehical.setVehicalChargeRange("60km" + i);
+			vehical.setVehicalOwnerName("nikita" + i);
+			vehical.setVehicalOwnerUID("243578765432" + i);
+			vehical.setVehicalOwnerContactDetails("8765432345" + i);
+			vehical.setVehicalOwnerAddress("Nagpur" + i);
 			saveVehicalDetail(vehical);
-			
+
 		}
 		return true;
-		
-		
+
 	}
 
+	@PostMapping("/kafka")
+	public Vehical kafkaPublishVehical(@RequestBody Vehical vehical) {
+		kafkaPublisher.getVehical(vehical);
+		return vehical;
+	}
+	
+	@GetMapping("/kafka/{message}")
+	public String kafkaPublishMassage(@PathVariable String message) {
+		kafkaPublisher.getMessage(message);
+		return "data published to kafka";
+	}
 }

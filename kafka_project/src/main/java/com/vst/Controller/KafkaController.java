@@ -16,14 +16,14 @@ import com.vst.service.Producer;
 @RequestMapping("/kafka")
 public class KafkaController {
 
-//	@Autowired
+//	@Autowired(required = true)
 //	KafkaTemplate<String, Object> kafkaTemplate;
 
 	@Autowired
 	Producer producer;
 
-//	String topic = "mongoindex";
-//
+	String topic = "mongoindex";
+
 //	@GetMapping("kafka/{name}")
 //	public String getKafka(@PathVariable String name) {
 //		kafkaTemplate.send(topic, " hii " + name + " welcome to virtuoso");
@@ -37,16 +37,16 @@ public class KafkaController {
 //		return "json data published";
 //
 //	}
-//
-//	@PostMapping("jsonpublisher")
-//	public String publishMessage(@RequestBody User user) {
-//		kafkaTemplate.send(topic, user);
-//		return "json data published";
-//
-//	}
-	
-	@GetMapping("/{message}")
-	public void getMessageFromClient(@PathVariable String message) {
-		producer.produceMessage(message);
+
+	@PostMapping("jsonpublisher")
+	public String publishMessage(@RequestBody User user) {
+		producer.userdetails(user);
+		return "json data published";
+
 	}
+//	
+//	@GetMapping("/{message}")
+//	public void getMessageFromClient(@PathVariable String message) {
+//		producer.produceMessage(message);
+//	}
 }

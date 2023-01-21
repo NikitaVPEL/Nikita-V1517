@@ -16,17 +16,17 @@ import org.springframework.kafka.support.serializer.JsonSerializer;
 public class KafkaConfig {
 
 	@Bean
-	public ProducerFactory<String, String> producerFactory() {
+	public ProducerFactory<String, Object> producerFactory() {
 
 		Map<String, Object> configs = new HashMap<>();
 		configs.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
 		configs.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
 		configs.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-		return new DefaultKafkaProducerFactory<String, String>(configs);
+		return new DefaultKafkaProducerFactory<String, Object>(configs);
 	}
 
 	@Bean
-	public KafkaTemplate<String, String> kafkaTemplate(){
+	public KafkaTemplate<String, Object> kafkaTemplate(){
 		return new KafkaTemplate<>(producerFactory());
 		
 	}
