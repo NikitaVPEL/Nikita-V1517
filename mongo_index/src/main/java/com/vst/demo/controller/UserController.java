@@ -8,6 +8,7 @@ import javax.swing.SortOrder;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.hibernate.result.Output;
+import org.hibernate.type.TrueFalseConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
@@ -43,7 +44,7 @@ public class UserController {
 	
 	@Autowired
 	DbService dbser;
-	
+
 	@Autowired
 	MongoClient mongoClient;
 	

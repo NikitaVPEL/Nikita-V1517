@@ -3,6 +3,7 @@ package com.vst.demo;
 import org.bson.Document;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 
 import com.mongodb.MongoClient;
 import com.mongodb.MongoCredential;
@@ -14,8 +15,12 @@ public class MongoIndexApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(MongoIndexApplication.class, args);
-		
+
+	}
 	
+	@Bean
+	public MongoClient mongoClient() {
+		return new MongoClient();
 	}
 
 }
