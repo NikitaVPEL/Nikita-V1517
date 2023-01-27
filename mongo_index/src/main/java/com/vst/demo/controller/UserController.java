@@ -71,8 +71,6 @@ public class UserController {
 	
 	@PostMapping("db")
 	public boolean save(@RequestBody User user) {
-		
-		
 		user.setId(dbser.getSequenceNumber(User.SEQUENCE_NAME));
 		 repo.save(user);
 		 return true;
@@ -122,21 +120,21 @@ public class UserController {
 	}
 	
 	
-//	@GetMapping("add/{add}")
-//	List<User> findAdd(@PathVariable String add){
-//		
-//		//match operation 
-//		MatchOperation matchOperation=Aggregation.match(new Criteria("add").is(add));
-//		//sort operation 
-//		SortOperation sortOperation= Aggregation.sort(Sort.by(Sort.Direction.DESC,"age"));
-//		//aggregation 
-//		Aggregation aggregation=Aggregation.newAggregation(matchOperation,sortOperation);
-//		AggregationResults output =mongoTemplate.aggregate(aggregation, "user", User.class);
-//		
-//		
-//		return output.getMappedResults();
-//		
-//	}
+	@GetMapping("add/{add}")
+	List<User> findAddress(@PathVariable String add){
+		
+		//match operation 
+		MatchOperation matchOperation=Aggregation.match(new Criteria("add").is(add));
+		//sort operation 
+		SortOperation sortOperation= Aggregation.sort(Sort.by(Sort.Direction.DESC,"age"));
+		//aggregation 
+		Aggregation aggregation=Aggregation.newAggregation(matchOperation,sortOperation);
+		AggregationResults output =mongoTemplate.aggregate(aggregation, "user", User.class);
+		
+		
+		return output.getMappedResults();
+		
+	}
 		@GetMapping("name/{name}/{add}")
 		List<User> findNameAndAdd(@PathVariable String name, @PathVariable String add){
 			return repo.findByNameAndAdd(name, add);
@@ -149,7 +147,9 @@ public class UserController {
 //			
 //			System.out.println(age);
 //			
-//			MongoTemplate mongoTemplate= new MongoTemplate(mongoClient,"test");
+//			MongoClient mongoClient2 = new MongoClient();
+//			
+//			MongoTemplate mongoTemplate= new MongoTemplate(mongoClient2, "test");
 //			Aggregation aggregation = Aggregation.newAggregation(Aggregation.match(Criteria.where("age").gt(18)),Aggregation.group("gender").count().as("count"));
 //			
 //			System.out.println(aggregation);
@@ -165,9 +165,9 @@ public class UserController {
 //				System.out.println(doc);	
 //			}
 //			System.out.println(results.getUniqueMappedResult());
-//			return results.getUniqueMappedResult();
-//			}
-//	
-//		
+		//	return results.getUniqueMappedResult();
+		//	}
+	
+		
 }
 
