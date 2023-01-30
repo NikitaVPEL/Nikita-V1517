@@ -26,13 +26,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.mongodb.ExplainVerbosity;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientOptions;
-
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoCursor;
-import com.mongodb.client.MongoDatabase;
 import com.vst.demo.model.User;
 import com.vst.demo.repository.UserRepo;
 
@@ -45,28 +38,20 @@ public class UserController {
 	@Autowired
 	DbService dbser;
 
-	@Autowired
-	MongoClient mongoClient;
+	
 	
 	@Autowired
 	MongoTemplate mongoTemplate;
 
 	
-		MongoClient mongoClient2 = new MongoClient("localhost",27017);
-	MongoDatabase database = mongoClient2.getDatabase("test");
-	MongoCollection<Document> collection = database.getCollection("DB");
     
 
 
 	@GetMapping("getid/{id}")
-	public Optional<User> getid(@PathVariable Bson id) {
+	public Optional<User> getid(@PathVariable int id) {
 
-	System.out.println(collection.find(id).explain(ExplainVerbosity.ALL_PLANS_EXECUTIONS));
+	 return repo.findById(id);
 		
-		
-		//System.out.println(repo.findById(id));
-		return null;
-
 	}
 	
 	@PostMapping("db")
@@ -120,21 +105,21 @@ public class UserController {
 	}
 	
 	
-	@GetMapping("add/{add}")
-	List<User> findAddress(@PathVariable String add){
-		
-		//match operation 
-		MatchOperation matchOperation=Aggregation.match(new Criteria("add").is(add));
-		//sort operation 
-		SortOperation sortOperation= Aggregation.sort(Sort.by(Sort.Direction.DESC,"age"));
-		//aggregation 
-		Aggregation aggregation=Aggregation.newAggregation(matchOperation,sortOperation);
-		AggregationResults output =mongoTemplate.aggregate(aggregation, "user", User.class);
-		
-		
-		return output.getMappedResults();
-		
-	}
+//	@GetMapping("add/{add}")
+//	List<User> findAddress(@PathVariable String add){
+//		
+//		//match operation 
+//		MatchOperation matchOperation=Aggregation.match(new Criteria("add").is(add));
+//		//sort operation 
+//		SortOperation sortOperation= Aggregation.sort(Sort.by(Sort.Direction.DESC,"age"));
+//		//aggregation 
+//		Aggregation aggregation=Aggregation.newAggregation(matchOperation,sortOperation);
+//		AggregationResults output =mongoTemplate.aggregate(aggregation, "user", User.class);
+//		
+//		
+//		return output.getMappedResults();
+//		
+//	}
 		@GetMapping("name/{name}/{add}")
 		List<User> findNameAndAdd(@PathVariable String name, @PathVariable String add){
 			return repo.findByNameAndAdd(name, add);
