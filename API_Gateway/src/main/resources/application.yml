@@ -1,0 +1,62 @@
+#spring:
+#  application:
+#    name: API-GATEWAY
+#    
+#    
+#  cloud:
+#    gateway:
+#      routes:
+#      - id: order-microservice
+#        uri: lb://ORDER-MICROSERVICE
+#        predicates:
+#        - Path=/order/**
+#        filters:
+#        - name: CircuitBreaker
+#          args:
+#            name: order-microservice
+#            fallbackuri: forward:/orderFallBack
+#      - id: payment-microservice
+#        uri: lb://PAYMENT-MICROSERVICE
+#        predicates:
+#        - Path=/payment/**
+#        filters:
+#        - name: CircuitBreaker
+#          args: 
+#            name: payment-microservice
+#            fallbackuri: forward:/paymentFallBack  
+#            
+#      discovery:
+#        locator:
+#          enabled: true
+#          lower-case-service-id: true  
+#    discovery:
+#      enabled: true
+#      
+#eureka:
+#  client:
+#    register-with-eureka: true
+#    fetch-registry: true
+#    service-url:
+#      defaultZone: http://localhost:8761/eureka/
+#  instance:
+#    hostname: localhost
+#    
+#server:
+#  port: 9999
+#    
+#    
+#management:
+#  endpoint:
+#    web:
+#      exposure:
+#        include: hystrix.stream
+#    
+#hystrix:
+#  command:
+#    fallbackcmd:
+#      execution:
+#        isolation:
+#          thread:
+#            timeoutInMilliseconds: 5000 
+#            
+#           
