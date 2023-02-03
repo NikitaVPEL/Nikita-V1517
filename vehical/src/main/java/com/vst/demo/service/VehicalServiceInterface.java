@@ -2,15 +2,16 @@ package com.vst.demo.service;
 
 import java.util.List;
 
+import com.vst.demo.dto.VehicalDTO;
 import com.vst.demo.model.Vehical;
 
 public interface VehicalServiceInterface {
 	
-	public boolean saveVehicalDetailsService(Vehical vehical);
+	public VehicalDTO saveVehicalDetailsService(VehicalDTO vehical);
 	
 	public boolean deleteVehicalByIdService(int id);
 	
-	public boolean updateVehicalService(int id, Vehical vehical);
+	public boolean updateVehicalService(int id, VehicalDTO vehical);
 
 	public Vehical findVehicalByIdService(int id);
 	

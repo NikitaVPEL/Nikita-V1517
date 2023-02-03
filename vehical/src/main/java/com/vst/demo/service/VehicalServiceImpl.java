@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.vst.demo.Converter.VehicalConverter;
+import com.vst.demo.dto.VehicalDTO;
 import com.vst.demo.exception.VehicalException;
 import com.vst.demo.model.Vehical;
 import com.vst.demo.repository.VehicalRepository;
@@ -17,13 +19,21 @@ public class VehicalServiceImpl implements VehicalServiceInterface {
 
 	@Autowired
 	VehicalRepository vRepo;
+	
+	@Autowired
+	VehicalConverter vehicalConverter;
 
 	@Override
 	@Transactional
-	public boolean saveVehicalDetailsService(Vehical vehical) {
-		// it will call the repository save method to add the details
-		vRepo.save(vehical);
-		return true;
+	public VehicalDTO saveVehicalDetailsService(VehicalDTO vehical) {
+
+		Vehical objVehical = vehicalConverter.dtoToEntity(vehical);
+		
+		if(vRepo.save(objVehical)!=null) {
+		VehicalDTO objDto = vehicalConverter.entityToDto(objVehical);
+		return objDto;
+		}
+		return null;
 	}
 	
 
@@ -47,13 +57,13 @@ public class VehicalServiceImpl implements VehicalServiceInterface {
 
 	@Override
 	@Transactional
-	public boolean updateVehicalService( int id, Vehical vehical) {
-
+	public boolean updateVehicalService( int id, VehicalDTO vehicalDto) {
+		Vehical vehical = vehicalConverter.dtoToEntity(vehicalDto);
+	
 		Vehical obj = vRepo.findByIdAndIsActiveTrue(id);
 
 		if (obj.getId() > 0) {
 
-			
 			if (vehical.getVehicalRegistrationNo() != null) {
 				obj.setVehicalRegistrationNo(vehical.getVehicalRegistrationNo());
 			}
@@ -103,7 +113,7 @@ public class VehicalServiceImpl implements VehicalServiceInterface {
 				obj.setVehicalOwnerAddress(vehical.getVehicalOwnerAddress());
 			}
 		}
-		vRepo.save(obj);
+			vRepo.save(obj);
 		return true;
 	}
 	

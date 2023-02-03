@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.vst.demo.Converter.VehicalConverter;
+import com.vst.demo.dto.VehicalDTO;
 import com.vst.demo.exception.VehicalException;
 import com.vst.demo.model.Vehical;
 import com.vst.demo.service.KafkaPublisher;
@@ -35,9 +37,12 @@ public class VehicalController {
 
 	@Autowired
 	SequenceGeneratorService sequenceService;
-	
+
 	@Autowired
 	KafkaPublisher kafkaPublisher;
+	
+	@Autowired
+	VehicalConverter vehicalConverter;
 
 	// get method for read the excel file for excel reader
 	@GetMapping("info")
@@ -47,29 +52,24 @@ public class VehicalController {
 
 	}
 
-//	@GetMapping("infos")
-//	public List<Vehical> getExcelList(){
-//	AnotherExcelReader excel = new AnotherExcelReader();
-//	return excel.vehicalTestExcel();
-//	}
 
 	// post/save the vehical details
 	@PostMapping("vehical")
-	public String saveVehicalDetail(@Valid @RequestBody Vehical vehical) {
+	public String saveVehicalDetail(@Valid @RequestBody VehicalDTO vehical) {
 
 		// for auto id update
-		vehical.setId(sequenceService.getSequenceNumber(vehical.SEQUENCE_NAME));
+		vehical.setId(sequenceService.getSequenceNumber(VehicalDTO.SEQUENCE_NAME));
 		vehical.setActive(true);
-
-		// to call the service for adding the data
-		try {
-			vService.saveVehicalDetailsService(vehical);
+		
+		VehicalDTO objDto = vService.saveVehicalDetailsService(vehical);
+		
+		if(objDto!=null) {
 			return "Vehical Added Successfully";
-		} catch (VehicalException e) {
-
+		}else {
 			logger.error("Something Went Wrong, Please Check The Details You Entered");
-			throw new VehicalException(e.getMessage());
+		    return " something went wrong please check your details";
 		}
+
 	}
 
 	// soft delete, or deregister the vehical
@@ -90,10 +90,10 @@ public class VehicalController {
 	}
 
 	// update the vehical details
+	
 	@PutMapping("vehical")
-	public String UpdateVehical(@RequestParam("id") int id, @Valid @RequestBody Vehical vehical) {
+	public String UpdateVehical(@RequestParam("id") int id, @Valid @RequestBody VehicalDTO vehical) {
 
-		// call the service update method to manipulate the data
 		try {
 			vService.updateVehicalService(id, vehical);
 			return "Vehical update successfully";
@@ -238,7 +238,7 @@ public class VehicalController {
 	public boolean saveMultiple() {
 
 		for (int i = 1; i < 10000; i++) {
-			Vehical vehical = new Vehical();
+			VehicalDTO vehical = new VehicalDTO();
 
 			vehical.setVehicalRegistrationNo("MH23RF6543" + i);
 			vehical.setVehicalClass("SUV" + i);
@@ -264,11 +264,11 @@ public class VehicalController {
 	}
 
 	@PostMapping("/kafka")
-	public Vehical kafkaPublishVehical(@RequestBody Vehical vehical) {
+	public VehicalDTO kafkaPublishVehical(@RequestBody VehicalDTO vehical) {
 		kafkaPublisher.getVehical(vehical);
 		return vehical;
 	}
-	
+
 	@GetMapping("/kafka/{message}")
 	public String kafkaPublishMassage(@PathVariable String message) {
 		kafkaPublisher.getMessage(message);
